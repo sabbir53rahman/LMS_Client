@@ -1,9 +1,21 @@
-"use client"
+"use client";
+import { useRouter } from "next/navigation";
 import { GraduationCap } from "lucide-react";
 import Link from "next/link";
 import { motion } from "framer-motion";
 
 export default function Home() {
+  const router = useRouter();
+  const user = "student"; 
+
+  const handleGetStarted = () => {
+    if (user) {
+      router.push("/dashboard"); // Redirect to dashboard if user exists
+    } else {
+      router.push("/auth/signup"); // Redirect to signup if user does not exist
+    }
+  };
+
   return (
     <div className="relative min-h-screen bg-gradient-to-br from-[#1a1a2e] via-[#16213e] to-[#0f3460] flex items-center justify-center px-6">
       {/* Hero Section */}
@@ -21,12 +33,13 @@ export default function Home() {
           supportive learning community. Start your educational journey today.
         </p>
         <div className="mt-10 flex items-center justify-center gap-6">
-          <Link href="/auth/signup">
-            <button className="flex items-center gap-2 text-lg bg-[#48BEF7] hover:bg-[#2a9df4] text-white px-6 py-3 rounded-lg shadow-md transition-all duration-300">
-              Get Started
-              <GraduationCap className="h-5 w-5" />
-            </button>
-          </Link>
+          <button
+            onClick={handleGetStarted}
+            className="flex items-center gap-2 text-lg bg-[#48BEF7] hover:bg-[#2a9df4] text-white px-6 py-3 rounded-lg shadow-md transition-all duration-300"
+          >
+            Get Started
+            <GraduationCap className="h-5 w-5" />
+          </button>
           <Link href="/courses">
             <button className="text-lg border border-white text-white px-6 py-3 rounded-lg hover:bg-white hover:text-black transition-all duration-300">
               Browse Courses
