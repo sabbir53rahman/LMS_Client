@@ -185,7 +185,7 @@ export default function Home() {
             </div>
             <div className="bg-[#f9f9f9] rounded-lg p-6 shadow hover:shadow-md transition">
               <p className="text-sm text-gray-700 mb-4">
-                “The certification helped me stand out during interviews. It's a
+                “The certification helped me stand out during interviews. It&apos;s a
                 great investment in yourself.”
               </p>
               <div className="text-left mt-4">
