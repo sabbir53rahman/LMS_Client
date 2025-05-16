@@ -4,57 +4,7 @@ import { useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { Search, Filter } from "lucide-react";
-
-const coursesData = [
-  {
-    id: 1,
-    title: "React for Beginners",
-    category: "Web Development",
-    image: "/images/react-course.jpg",
-  },
-  {
-    id: 2,
-    title: "Advanced JavaScript",
-    category: "Programming",
-    image: "/images/js-course.jpg",
-  },
-  {
-    id: 3,
-    title: "UI/UX Design",
-    category: "Design",
-    image: "/images/uiux-course.jpg",
-  },
-  {
-    id: 4,
-    title: "Python for Data Science",
-    category: "Data Science",
-    image: "/images/python-course.jpg",
-  },
-  {
-    id: 5,
-    title: "React for Beginners",
-    category: "Web Development",
-    image: "/images/react-course.jpg",
-  },
-  {
-    id: 6,
-    title: "Advanced JavaScript",
-    category: "Programming",
-    image: "/images/js-course.jpg",
-  },
-  {
-    id: 7,
-    title: "UI/UX Design",
-    category: "Design",
-    image: "/images/uiux-course.jpg",
-  },
-  {
-    id: 8,
-    title: "Python for Data Science",
-    category: "Data Science",
-    image: "/images/python-course.jpg",
-  },
-];
+import { useGetAllCoursesQuery } from "@/redux/features/courseSlice/courseSlice";
 
 const categories = [
   "All",
@@ -65,10 +15,11 @@ const categories = [
 ];
 
 export default function CourseListing() {
+  const { data: courses = [], isLoading, isError } = useGetAllCoursesQuery();
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("All");
 
-  const filteredCourses = coursesData.filter(
+  const filteredCourses = courses.filter(
     (course) =>
       (selectedCategory === "All" || course.category === selectedCategory) &&
       course.title.toLowerCase().includes(searchTerm.toLowerCase())
@@ -83,7 +34,7 @@ export default function CourseListing() {
         </h1>
 
         {/* Search & Filter */}
-        <div className="flex flex-col md:flex-row items-center gap-4 mb-8">
+        <div className="flex flex-col md:flex-row items-center gap-4 mb-10">
           {/* Search Bar */}
           <div className="relative w-full md:w-1/2">
             <input
@@ -113,36 +64,53 @@ export default function CourseListing() {
           </div>
         </div>
 
-        {/* Courses Grid */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-          {filteredCourses.map((course) => (
-            <Link
-              href={`/course-details/${course.id}`}
-              key={course.id}
-              className="group bg-white shadow-lg rounded-lg overflow-hidden transition transform hover:scale-105"
-            >
-              <div className="relative w-full h-48">
-                <Image
-                  src={course.image}
-                  alt={course.title}
-                  layout="fill"
-                  objectFit="cover"
-                  className="rounded-t-lg"
-                />
-              </div>
-              <div className="p-4 bg-[#FFFFFF]">
-                <h2 className="text-xl font-semibold text-[#2D2E32] group-hover:text-[#48BEF7]">
-                  {course.title}
-                </h2>
-                <p className="text-gray-500">{course.category}</p>
-              </div>
-            </Link>
-          ))}
-        </div>
+        {/* Loading or Error State */}
+        {isLoading && <p className="text-center">Loading courses...</p>}
+        {isError && (
+          <p className="text-center text-red-500">Failed to load courses.</p>
+        )}
 
-        {/* No Results Message */}
-        {filteredCourses.length === 0 && (
-          <p className="text-center text-gray-500 mt-8">No courses found.</p>
+        {/* Courses Grid */}
+        {!isLoading && !isError && (
+          <>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+              {filteredCourses.map((course) => (
+                <Link
+                  href={`/dashboard/courseListing/${course._id}`}
+                  key={course._id}
+                  className="group bg-white border border-gray-200 rounded-2xl shadow-sm hover:shadow-lg overflow-hidden transition-transform hover:-translate-y-1 duration-300"
+                >
+                  <div className="relative w-full h-52">
+                    <Image
+                      src={course.thumbnail || "/images/default-course.jpg"}
+                      alt={course.title}
+                      layout="fill"
+                      objectFit="cover"
+                      className="rounded-t-2xl"
+                    />
+                  </div>
+                  <div className="p-5 space-y-2">
+                    <span className="text-sm font-medium text-[#48BEF7] bg-[#E0F7FF] px-3 py-1 rounded-full inline-block">
+                      {course.category || "General"}
+                    </span>
+                    <h2 className="text-lg font-semibold text-[#2D2E32] group-hover:text-[#48BEF7] transition">
+                      {course.title}
+                    </h2>
+                    <p className="text-gray-600 font-bold text-md">
+                      {course.price ? `$${course.price}` : "Free"}
+                    </p>
+                  </div>
+                </Link>
+              ))}
+            </div>
+
+            {/* No Results Message */}
+            {filteredCourses.length === 0 && (
+              <p className="text-center text-gray-500 mt-8">
+                No courses found.
+              </p>
+            )}
+          </>
         )}
       </div>
     </div>

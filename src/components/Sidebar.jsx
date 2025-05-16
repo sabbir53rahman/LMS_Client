@@ -4,7 +4,7 @@ import { Book, LayoutDashboard, PlusCircle, PlayCircle } from "lucide-react";
 import Link from "next/link";
 
 export default function Sidebar() {
-  const [role] = useState("teacher"); // Change this to "student" to test role-based links
+  const [role] = useState("teacher"); 
 
   const commonLinks = [
     {
@@ -35,7 +35,7 @@ export default function Sidebar() {
   const teacherLinks = [
     {
       name: "Add New Lesson",
-      path: "/dashboard/add-lesson",
+      path: "/dashboard/addLesson",
       icon: <PlusCircle />,
     },
     {

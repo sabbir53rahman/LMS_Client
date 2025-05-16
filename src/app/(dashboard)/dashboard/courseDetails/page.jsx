@@ -145,7 +145,7 @@ export default function CourseDetails() {
           {userRole === "teacher" && (
             <div className="mt-10">
               <Link
-                href={`/add-lesson/${courseData.id}`}
+                href={`/dashboard/addLesson/${courseData.id}`}
                 className="px-6 py-3 bg-purple-600 text-white text-lg rounded-lg font-semibold hover:bg-purple-700 transition"
               >
                 Add New Lesson

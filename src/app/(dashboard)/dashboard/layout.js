@@ -10,7 +10,7 @@ function Layout({ children }) {
       </div>
 
       {/* Main Content - Takes full width and scrolls */}
-      <div className="flex-1 md:ml-64">
+      <div className="flex-1 md:ml-64 pt-[75px]">
         {children}
       </div>
     </div>

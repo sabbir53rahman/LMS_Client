@@ -1,13 +1,19 @@
 "use client";
+
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
 import Link from "next/link";
+import useAuth from "@/Firebase/useAuth";
 
 export default function Login() {
   const [formData, setFormData] = useState({
     email: "",
     password: "",
   });
+  const [error, setError] = useState(null);
+  const router = useRouter();
+  const { signIn } = useAuth(); 
 
   // Handle input change
   const handleChange = (e) => {
@@ -17,13 +23,17 @@ export default function Login() {
   // Handle form submission
   const handleSubmit = async (e) => {
     e.preventDefault();
-
-    alert("Login successful!");
+    setError(null);
+    try {
+      await signIn(formData.email, formData.password); 
+      router.push("/"); 
+    } catch (err) {
+      setError(err.message);
+    }
   };
 
   return (
     <div className="relative min-h-screen bg-gradient-to-br from-[#1a1a2e] via-[#16213e] to-[#0f3460] flex items-center justify-center px-6">
-      {/* Login Box */}
       <motion.div
         initial={{ opacity: 0, y: 30 }}
         animate={{ opacity: 1, y: 0 }}
@@ -33,7 +43,12 @@ export default function Login() {
         <h1 className="text-4xl font-bold">Welcome Back</h1>
         <p className="mt-2 text-gray-300">Enter your credentials to log in</p>
 
-        {/* Login Form */}
+        {error && (
+          <p className="mt-4 text-red-400 bg-red-100 text-sm p-2 rounded-md">
+            {error}
+          </p>
+        )}
+
         <form onSubmit={handleSubmit} className="mt-6 flex flex-col gap-4">
           <input
             type="email"
@@ -62,7 +77,6 @@ export default function Login() {
           </button>
         </form>
 
-        {/* Forgot Password & Sign-Up Redirect */}
         <p className="mt-4 text-gray-300">
           Do not have an account?{" "}
           <Link href="/auth/signup" className="text-[#48BEF7] hover:underline">
