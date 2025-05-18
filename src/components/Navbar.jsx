@@ -6,15 +6,19 @@ import Image from "next/image";
 import { Menu, X } from "lucide-react";
 import useAuth from "@/Firebase/useAuth";
 import logo from "@/assets/logo.png";
+import { useDispatch } from "react-redux";
+import { logout } from "@/redux/features/userSlice/userSlice";
 
 export default function Navbar() {
   const { user, logOut } = useAuth();
   const [menuOpen, setMenuOpen] = useState(false);
+  const dispatch = useDispatch();
 
   const handleLogout = async () => {
     try {
       await logOut();
-      setMenuOpen(false); 
+      dispatch(logout());
+      setMenuOpen(false);
     } catch (error) {
       console.error("Logout failed:", error);
     }
@@ -33,14 +37,23 @@ export default function Navbar() {
 
         {/* Nav Links - Centered */}
         <nav className="hidden md:flex flex-1 justify-center gap-8">
-          <Link href="/" className="text-[#2D2E32] hover:text-[#48BEF7] font-medium transition-colors">
+          <Link
+            href="/"
+            className="text-[#2D2E32] hover:text-[#48BEF7] font-medium transition-colors"
+          >
             Home
           </Link>
-          <Link href="/courses" className="text-[#2D2E32] hover:text-[#48BEF7] font-medium transition-colors">
+          <Link
+            href="/courses"
+            className="text-[#2D2E32] hover:text-[#48BEF7] font-medium transition-colors"
+          >
             Courses
           </Link>
           {user && (
-            <Link href="/dashboard" className="text-[#2D2E32] hover:text-[#48BEF7] font-medium transition-colors">
+            <Link
+              href="/dashboard"
+              className="text-[#2D2E32] hover:text-[#48BEF7] font-medium transition-colors"
+            >
               Dashboard
             </Link>
           )}
@@ -83,14 +96,23 @@ export default function Navbar() {
       {menuOpen && (
         <div className="md:hidden bg-white px-4 pb-6 shadow-md">
           <nav className="flex flex-col items-center gap-4">
-            <Link href="/" className="text-[#2D2E32] hover:text-[#48BEF7] font-medium">
+            <Link
+              href="/"
+              className="text-[#2D2E32] hover:text-[#48BEF7] font-medium"
+            >
               Home
             </Link>
-            <Link href="/courses" className="text-[#2D2E32] hover:text-[#48BEF7] font-medium">
+            <Link
+              href="/courses"
+              className="text-[#2D2E32] hover:text-[#48BEF7] font-medium"
+            >
               Courses
             </Link>
             {user && (
-              <Link href="/dashboard" className="text-[#2D2E32] hover:text-[#48BEF7] font-medium">
+              <Link
+                href="/dashboard"
+                className="text-[#2D2E32] hover:text-[#48BEF7] font-medium"
+              >
                 Dashboard
               </Link>
             )}

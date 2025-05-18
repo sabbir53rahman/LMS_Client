@@ -13,7 +13,7 @@ export default function Login() {
   });
   const [error, setError] = useState(null);
   const router = useRouter();
-  const { signIn } = useAuth(); 
+  const { signIn } = useAuth();
 
   // Handle input change
   const handleChange = (e) => {
@@ -25,8 +25,8 @@ export default function Login() {
     e.preventDefault();
     setError(null);
     try {
-      await signIn(formData.email, formData.password); 
-      router.push("/"); 
+      await signIn(formData.email, formData.password);
+      router.push("/");
     } catch (err) {
       setError(err.message);
     }

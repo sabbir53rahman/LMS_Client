@@ -13,6 +13,7 @@ import app from "./firebase.config";
 import {
   addUser,
   fetchCurrentUser,
+  loginUser,
 } from "@/redux/features/userSlice/userSlice";
 
 const auth = getAuth(app);
@@ -61,6 +62,9 @@ const useAuth = () => {
         password
       );
       setUser(userCredential.user);
+
+      await dispatch(loginUser(email)).unwrap();
+
       return userCredential.user;
     } catch (error) {
       console.error("Error signing in:", error.message);
@@ -82,9 +86,7 @@ const useAuth = () => {
     const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
       if (currentUser?.email) {
         try {
-          await dispatch(
-            fetchCurrentUser({ email: currentUser.email })
-          ).unwrap();
+          await dispatch(fetchCurrentUser(currentUser.email)).unwrap();
         } catch (error) {
           console.error("Error fetching user:", error);
         }

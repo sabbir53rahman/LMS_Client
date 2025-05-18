@@ -3,7 +3,7 @@ import axios from "axios";
 
 const BASE_URL = "http://localhost:5000/api/v1/users";
 
-// **Register User**
+// **Register User **
 export const addUser = createAsyncThunk(
   "user/register",
   async (userData, { rejectWithValue }) => {
@@ -16,20 +16,49 @@ export const addUser = createAsyncThunk(
   }
 );
 
-// **Fetch Current User**
-export const fetchCurrentUser = createAsyncThunk(
-  "user/fetchCurrentUser",
-  async (userData, { rejectWithValue }) => {
+// **Login User **
+export const loginUser = createAsyncThunk(
+  "user/login",
+  async (email, { rejectWithValue }) => {
     try {
-      const response = await axios.post(`${BASE_URL}/currentUser`, userData);
-      return response.data;
+      const response = await axios.post(`${BASE_URL}/login`, { email });
+      const { user, token } = response.data;
+      //console.log("Login Response:", response.data);
+
+      // Store JWT token
+      localStorage.setItem("token", token);
+
+      return user;
     } catch (error) {
       return rejectWithValue(error.response.data);
     }
   }
 );
 
-// **Fetch All Users**
+// **Fetch Current User **
+export const fetchCurrentUser = createAsyncThunk(
+  "user/fetchCurrentUser",
+  async (email, { rejectWithValue }) => {
+    try {
+      const token = localStorage.getItem("token");
+
+      const response = await axios.get(`${BASE_URL}/currentUser`, {
+        params: { email },
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      return response.data;
+    } catch (error) {
+      return rejectWithValue(
+        error.response?.data || { message: "Unknown error" }
+      );
+    }
+  }
+);
+
+// **Fetch All Users **
 export const fetchAllUsers = createAsyncThunk(
   "user/fetchAllUsers",
   async (_, { rejectWithValue }) => {
@@ -42,6 +71,7 @@ export const fetchAllUsers = createAsyncThunk(
   }
 );
 
+// **User Slice **
 const userSlice = createSlice({
   name: "user",
   initialState: {
@@ -53,10 +83,12 @@ const userSlice = createSlice({
   reducers: {
     logout: (state) => {
       state.user = null;
+      localStorage.removeItem("token");
     },
   },
   extraReducers: (builder) => {
     builder
+      // Register User
       .addCase(addUser.pending, (state) => {
         state.isLoading = true;
         state.error = null;
@@ -67,8 +99,24 @@ const userSlice = createSlice({
       })
       .addCase(addUser.rejected, (state, action) => {
         state.isLoading = false;
-        state.error = action.payload.message;
+        state.error = action.payload?.message || "Registration failed";
       })
+
+      // Login User
+      .addCase(loginUser.pending, (state) => {
+        state.isLoading = true;
+        state.error = null;
+      })
+      .addCase(loginUser.fulfilled, (state, action) => {
+        state.isLoading = false;
+        state.user = action.payload;
+      })
+      .addCase(loginUser.rejected, (state, action) => {
+        state.isLoading = false;
+        state.error = action.payload?.message || "Login failed";
+      })
+
+      // Fetch Current User
       .addCase(fetchCurrentUser.pending, (state) => {
         state.isLoading = true;
         state.error = null;
@@ -76,11 +124,14 @@ const userSlice = createSlice({
       .addCase(fetchCurrentUser.fulfilled, (state, action) => {
         state.isLoading = false;
         state.user = action.payload;
+        console.log(state.user)
       })
       .addCase(fetchCurrentUser.rejected, (state, action) => {
         state.isLoading = false;
-        state.error = action.payload.message;
+        state.error = action.payload?.message || "Fetching user failed";
       })
+
+      // Fetch All Users
       .addCase(fetchAllUsers.pending, (state) => {
         state.isLoading = true;
         state.error = null;
@@ -91,9 +142,11 @@ const userSlice = createSlice({
       })
       .addCase(fetchAllUsers.rejected, (state, action) => {
         state.isLoading = false;
-        state.error = action.payload.message;
+        state.error = action.payload?.message || "Fetching users failed";
       });
   },
 });
 
+// **Exports **
+export const { logout } = userSlice.actions;
 export const userReducer = userSlice.reducer;
