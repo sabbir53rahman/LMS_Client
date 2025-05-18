@@ -2,7 +2,7 @@ import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 
 export const apiSlice = createApi({
   reducerPath: "api",
-  tagTypes: ["Course", "Lesson"],
+  tagTypes: ["Course", "Lesson","Like"],
   baseQuery: fetchBaseQuery({
     baseUrl:
       "https://lms-server-prl3.onrender.com/api/v1" ||
