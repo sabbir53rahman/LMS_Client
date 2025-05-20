@@ -22,7 +22,7 @@ export const loginUser = createAsyncThunk(
   "user/login",
   async (email, { rejectWithValue }) => {
     try {
-      const response = await axios.post(`${BASE_URL}/login`, { email });
+      const response = await axios.post(`${BASE_URL}/users/login`, { email });
       const { user, token } = response.data;
       //console.log("Login Response:", response.data);
 
@@ -43,7 +43,7 @@ export const fetchCurrentUser = createAsyncThunk(
     try {
       const token = localStorage.getItem("token");
 
-      const response = await axios.get(`${BASE_URL}/currentUser`, {
+      const response = await axios.get(`${BASE_URL}/users/currentUser`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
