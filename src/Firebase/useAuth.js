@@ -61,7 +61,7 @@ const useAuth = () => {
         email,
         password
       );
-      
+
       await dispatch(loginUser(email)).unwrap();
 
       setUser(userCredential.user);
@@ -87,7 +87,7 @@ const useAuth = () => {
     const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
       if (currentUser?.email) {
         try {
-          await dispatch(fetchCurrentUser(currentUser.email)).unwrap();
+          await dispatch(fetchCurrentUser()).unwrap();
         } catch (error) {
           console.error("Error fetching user:", error);
         }

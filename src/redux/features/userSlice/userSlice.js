@@ -1,8 +1,8 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import axios from "axios";
 
-const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:5000/api/v1";
-
+const BASE_URL =
+  process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:5000/api/v1";
 
 // **Register User **
 export const addUser = createAsyncThunk(
@@ -39,12 +39,11 @@ export const loginUser = createAsyncThunk(
 // **Fetch Current User **
 export const fetchCurrentUser = createAsyncThunk(
   "user/fetchCurrentUser",
-  async (email, { rejectWithValue }) => {
+  async (_, { rejectWithValue }) => {
     try {
       const token = localStorage.getItem("token");
 
       const response = await axios.get(`${BASE_URL}/currentUser`, {
-        params: { email },
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -97,6 +96,7 @@ const userSlice = createSlice({
       .addCase(addUser.fulfilled, (state, action) => {
         state.isLoading = false;
         state.user = action.payload;
+        localStorage.setItem("token", action.payload.token);
       })
       .addCase(addUser.rejected, (state, action) => {
         state.isLoading = false;
@@ -125,7 +125,7 @@ const userSlice = createSlice({
       .addCase(fetchCurrentUser.fulfilled, (state, action) => {
         state.isLoading = false;
         state.user = action.payload;
-        console.log(state.user)
+        console.log(state.user);
       })
       .addCase(fetchCurrentUser.rejected, (state, action) => {
         state.isLoading = false;
