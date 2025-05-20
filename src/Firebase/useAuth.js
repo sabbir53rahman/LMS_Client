@@ -61,9 +61,10 @@ const useAuth = () => {
         email,
         password
       );
-      setUser(userCredential.user);
-
+      
       await dispatch(loginUser(email)).unwrap();
+
+      setUser(userCredential.user);
 
       return userCredential.user;
     } catch (error) {
