@@ -4,7 +4,7 @@ export const apiSlice = createApi({
   reducerPath: "api",
   tagTypes: ["Course", "Lesson", "Like"],
   baseQuery: fetchBaseQuery({
-    baseUrl: process.env.BASE_URL || "http://localhost:5000/api/v1",
+    baseUrl: process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:5000/api/v1",
 
     prepareHeaders: async (headers, { getState, endpoint }) => {
       const token = localStorage.getItem("accessToken");
