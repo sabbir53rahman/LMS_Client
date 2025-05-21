@@ -4,23 +4,13 @@ import { Book, LayoutDashboard, PlusCircle, PlayCircle } from "lucide-react";
 import Link from "next/link";
 
 export default function Sidebar() {
-  const [role] = useState("teacher"); 
+  const [role] = useState("teacher");
 
   const commonLinks = [
     {
       name: "Course Listing",
       path: "/dashboard/courseListing",
       icon: <Book />,
-    },
-    {
-      name: "Course Details",
-      path: "/dashboard/courseDetails",
-      icon: <PlayCircle />,
-    },
-    {
-      name: "Add New Course",
-      path: "/dashboard/addCourse",
-      icon: <PlusCircle />,
     },
   ];
 
@@ -36,6 +26,16 @@ export default function Sidebar() {
     {
       name: "Add New Lesson",
       path: "/dashboard/addLesson",
+      icon: <PlusCircle />,
+    },
+    {
+      name: "My Courses ",
+      path: "/dashboard/myCourse",
+      icon: <PlayCircle />,
+    },
+    {
+      name: "Add New Course",
+      path: "/dashboard/addCourse",
       icon: <PlusCircle />,
     },
     {
