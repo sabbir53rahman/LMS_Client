@@ -1,9 +1,11 @@
 "use client";
+
 import { useState } from "react";
 import { motion } from "framer-motion";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import useAuth from "@/Firebase/useAuth";
+import { Eye, EyeOff } from "lucide-react"; // 👈 Import eye icons
 
 export default function SignUp() {
   const router = useRouter();
@@ -18,6 +20,7 @@ export default function SignUp() {
 
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
+  const [showPassword, setShowPassword] = useState(false); // 👈 Password toggle state
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -36,7 +39,7 @@ export default function SignUp() {
         formData.role
       );
       alert("Account created successfully!");
-      router.push("/"); // Redirect to home page
+      router.push("/");
     } catch (err) {
       setError(err.message || "Failed to create user");
     } finally {
@@ -56,6 +59,7 @@ export default function SignUp() {
         <p className="mt-2 text-gray-300">Choose your role to continue</p>
 
         <form onSubmit={handleSubmit} className="mt-6 flex flex-col gap-4">
+          {/* Full Name */}
           <input
             type="text"
             name="fullName"
@@ -65,6 +69,8 @@ export default function SignUp() {
             required
             className="w-full px-4 py-3 rounded-lg bg-white/20 text-white placeholder-gray-300 border border-white/30 focus:outline-none focus:ring-2 focus:ring-[#48BEF7]"
           />
+
+          {/* Email */}
           <input
             type="email"
             name="email"
@@ -74,16 +80,28 @@ export default function SignUp() {
             required
             className="w-full px-4 py-3 rounded-lg bg-white/20 text-white placeholder-gray-300 border border-white/30 focus:outline-none focus:ring-2 focus:ring-[#48BEF7]"
           />
-          <input
-            type="password"
-            name="password"
-            placeholder="Password"
-            value={formData.password}
-            onChange={handleChange}
-            required
-            className="w-full px-4 py-3 rounded-lg bg-white/20 text-white placeholder-gray-300 border border-white/30 focus:outline-none focus:ring-2 focus:ring-[#48BEF7]"
-          />
 
+          {/* Password with Toggle */}
+          <div className="relative">
+            <input
+              type={showPassword ? "text" : "password"}
+              name="password"
+              placeholder="Password"
+              value={formData.password}
+              onChange={handleChange}
+              required
+              className="w-full px-4 py-3 pr-12 rounded-lg bg-white/20 text-white placeholder-gray-300 border border-white/30 focus:outline-none focus:ring-2 focus:ring-[#48BEF7]"
+            />
+            <button
+              type="button"
+              onClick={() => setShowPassword(!showPassword)}
+              className="absolute right-3 top-1/2 transform -translate-y-1/2 text-white"
+            >
+              {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
+            </button>
+          </div>
+
+          {/* Role Dropdown */}
           <select
             name="role"
             value={formData.role}
@@ -102,6 +120,7 @@ export default function SignUp() {
             </option>
           </select>
 
+          {/* Submit Button */}
           <button
             type="submit"
             disabled={loading}
@@ -109,9 +128,12 @@ export default function SignUp() {
           >
             {loading ? "Signing Up..." : "Sign Up"}
           </button>
+
+          {/* Error Message */}
           {error && <p className="text-red-400 mt-2">{error}</p>}
         </form>
 
+        {/* Login Redirect */}
         <p className="mt-4 text-gray-300">
           Already have an account?{" "}
           <Link href="/auth/login" className="text-[#48BEF7] hover:underline">

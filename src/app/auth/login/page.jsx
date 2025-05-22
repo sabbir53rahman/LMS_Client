@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
 import Link from "next/link";
 import useAuth from "@/Firebase/useAuth";
+import { Eye, EyeOff } from "lucide-react"; // 👈 Import icons
 
 export default function Login() {
   const [formData, setFormData] = useState({
@@ -12,6 +13,7 @@ export default function Login() {
     password: "",
   });
   const [error, setError] = useState(null);
+  const [showPassword, setShowPassword] = useState(false); // 👈 Toggle state
   const router = useRouter();
   const { signIn } = useAuth();
 
@@ -50,6 +52,7 @@ export default function Login() {
         )}
 
         <form onSubmit={handleSubmit} className="mt-6 flex flex-col gap-4">
+          {/* Email Input */}
           <input
             type="email"
             name="email"
@@ -59,16 +62,28 @@ export default function Login() {
             required
             className="w-full px-4 py-3 rounded-lg bg-white/20 text-white placeholder-gray-300 border border-white/30 focus:outline-none focus:ring-2 focus:ring-[#48BEF7]"
           />
-          <input
-            type="password"
-            name="password"
-            placeholder="Password"
-            value={formData.password}
-            onChange={handleChange}
-            required
-            className="w-full px-4 py-3 rounded-lg bg-white/20 text-white placeholder-gray-300 border border-white/30 focus:outline-none focus:ring-2 focus:ring-[#48BEF7]"
-          />
 
+          {/* Password Input with Eye Icon */}
+          <div className="relative">
+            <input
+              type={showPassword ? "text" : "password"}
+              name="password"
+              placeholder="Password"
+              value={formData.password}
+              onChange={handleChange}
+              required
+              className="w-full px-4 py-3 pr-12 rounded-lg bg-white/20 text-white placeholder-gray-300 border border-white/30 focus:outline-none focus:ring-2 focus:ring-[#48BEF7]"
+            />
+            <button
+              type="button"
+              onClick={() => setShowPassword(!showPassword)}
+              className="absolute right-3 top-1/2 transform -translate-y-1/2 text-white"
+            >
+              {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
+            </button>
+          </div>
+
+          {/* Submit Button */}
           <button
             type="submit"
             className="mt-4 w-full bg-[#48BEF7] hover:bg-[#2a9df4] text-white py-3 rounded-lg text-lg font-semibold transition-all duration-300"
@@ -77,6 +92,7 @@ export default function Login() {
           </button>
         </form>
 
+        {/* Sign Up Link */}
         <p className="mt-4 text-gray-300">
           Do not have an account?{" "}
           <Link href="/auth/signup" className="text-[#48BEF7] hover:underline">
