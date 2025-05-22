@@ -2,9 +2,12 @@
 import { useState } from "react";
 import { Book, LayoutDashboard, PlusCircle, PlayCircle } from "lucide-react";
 import Link from "next/link";
+import { useSelector } from "react-redux";
 
 export default function Sidebar() {
-  const [role] = useState("teacher");
+  const user = useSelector((state) => state.user.user);
+  console.log(user)
+  const role = user?.role;
 
   const commonLinks = [
     {
@@ -16,8 +19,13 @@ export default function Sidebar() {
 
   const studentLinks = [
     {
+      name: "Enrolled Course",
+      path: "/dashboard/enrollCourse",
+      icon: <Book />,
+    },
+    {
       name: "Student Dashboard",
-      path: "/dashboard/student-dashboard",
+      path: "/dashboard",
       icon: <LayoutDashboard />,
     },
   ];
@@ -40,7 +48,7 @@ export default function Sidebar() {
     },
     {
       name: "Teacher Dashboard",
-      path: "/dashboard/teacher-dashboard",
+      path: "/dashboard",
       icon: <LayoutDashboard />,
     },
   ];

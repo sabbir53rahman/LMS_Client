@@ -3,29 +3,84 @@
 import { useState, useEffect } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { useParams } from "next/navigation";
-import { useGetCourseByIdQuery } from "@/redux/features/courseSlice/courseSlice";
+import { useParams, useRouter } from "next/navigation";
+import { useSelector } from "react-redux";
+import {
+  useGetCourseByIdQuery,
+  useDeleteCourseMutation,
+} from "@/redux/features/courseSlice/courseSlice";
+
 import { PlayCircle, CheckCircle } from "lucide-react";
+import {
+  useEnrollCourseMutation,
+  useGetEnrollmentsByUserQuery,
+} from "@/redux/features/enrollSlice/enrollSlice";
 
 export default function CourseDetails() {
   const { id } = useParams();
+  const router = useRouter();
+
   const { data: courseData, isLoading, isError } = useGetCourseByIdQuery(id);
-  const [userRole, setUserRole] = useState("student"); // or 'teacher', 'guest'
+  const [deleteCourse, { isLoading: isDeleting }] = useDeleteCourseMutation();
+  const [enrollCourse] = useEnrollCourseMutation();
+
+  const user = useSelector((state) => state.user.user);
+  const userRole = user?.role || "guest";
+
+  const { data: enrollments, isLoading: isEnrollmentsLoading } =
+    useGetEnrollmentsByUserQuery(user?._id, {
+      skip: !user?._id || userRole !== "student",
+    });
+
   const [isEnrolled, setIsEnrolled] = useState(false);
   const [progress, setProgress] = useState(0);
 
   useEffect(() => {
     if (courseData) {
-      // Example logic: students are enrolled by default, teachers are not
-      setIsEnrolled(userRole === "student");
       const completedLessons =
         courseData.lessons?.filter((l) => l.completed).length || 0;
       const totalLessons = courseData.lessons?.length || 1;
       setProgress((completedLessons / totalLessons) * 100);
     }
-  }, [courseData, userRole]);
 
-  if (isLoading)
+    if (userRole === "student" && enrollments?.length > 0 && courseData) {
+      const enrolled = enrollments.some(
+        (enroll) => enroll.course?._id === courseData._id
+      );
+      setIsEnrolled(enrolled);
+    }
+  }, [courseData, enrollments, userRole]);
+
+  const handleEnroll = async () => {
+    try {
+      await enrollCourse({
+        userId: user._id,
+        courseId: courseData._id,
+      }).unwrap();
+      setIsEnrolled(true);
+    } catch (error) {
+      console.error("Enrollment failed:", error);
+      alert("Something went wrong. Try again later.");
+    }
+  };
+
+  const handleDelete = async () => {
+    const confirmed = window.confirm(
+      "Are you sure you want to delete this course? This action cannot be undone."
+    );
+    if (confirmed) {
+      try {
+        await deleteCourse(courseData._id).unwrap();
+        alert("Course deleted successfully!");
+        router.push("/dashboard");
+      } catch (error) {
+        console.error("Failed to delete course:", error);
+        alert("Your are not authorize to delete this course");
+      }
+    }
+  };
+
+  if (isLoading || isEnrollmentsLoading)
     return (
       <div className="flex justify-center items-center h-screen text-xl font-semibold text-gray-600">
         Loading...
@@ -72,8 +127,8 @@ export default function CourseDetails() {
             </p>
           )}
 
-          {/* Progress Bar (For Students) */}
-          {userRole === "student" && (
+          {/* Progress Bar (Students) */}
+          {userRole === "student" && isEnrolled && (
             <div className="mt-6">
               <p className="text-gray-700 font-semibold mb-2">Progress:</p>
               <div className="bg-gray-200 h-3 rounded-full overflow-hidden">
@@ -85,7 +140,7 @@ export default function CourseDetails() {
             </div>
           )}
 
-          {/* Enrollment & Teacher Actions */}
+          {/* Action Buttons */}
           <div className="mt-8 flex flex-wrap gap-4">
             {userRole === "guest" && (
               <p className="text-red-500 font-semibold">
@@ -95,20 +150,29 @@ export default function CourseDetails() {
 
             {userRole === "student" && !isEnrolled && (
               <button
+                onClick={handleEnroll}
                 className="px-6 py-3 bg-[#48BEF7] text-white text-lg rounded-lg font-semibold hover:bg-blue-600 transition"
-                onClick={() => setIsEnrolled(true)}
               >
                 Enroll Now
               </button>
             )}
 
             {userRole === "teacher" && (
-              <Link
-                href={`/edit-course/${courseData._id}`}
-                className="px-6 py-3 bg-green-600 text-white text-lg rounded-lg font-semibold hover:bg-green-700 transition"
-              >
-                Edit Course
-              </Link>
+              <>
+                <Link
+                  href={`/edit-course/${courseData._id}`}
+                  className="px-6 py-3 bg-green-600 text-white text-lg rounded-lg font-semibold hover:bg-green-700 transition"
+                >
+                  Edit Course
+                </Link>
+                <button
+                  onClick={handleDelete}
+                  className="px-6 py-3 bg-red-600 text-white text-lg rounded-lg font-semibold hover:bg-red-700 transition"
+                  disabled={isDeleting}
+                >
+                  {isDeleting ? "Deleting..." : "Delete Course"}
+                </button>
+              </>
             )}
           </div>
 
@@ -148,7 +212,7 @@ export default function CourseDetails() {
             </ul>
           </div>
 
-          {/* Teacher Actions */}
+          {/* Teacher Add Lesson */}
           {userRole === "teacher" && (
             <div className="mt-10">
               <Link

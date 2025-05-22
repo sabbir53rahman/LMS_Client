@@ -24,6 +24,16 @@ export const enrollApi = apiSlice.injectEndpoints({
       providesTags: ["Enrollment"],
     }),
 
+    getLastEnrollmentsOfTeacher: builder.query({
+      query: (teacherId) => ({
+        url: `/enroll/teacher/${teacherId}`,
+        credentials: "include",
+      }),
+      providesTags: (result, error, teacherId) => [
+        { type: "Enrollment", id: `teacher-${teacherId}` },
+      ],
+    }),
+
     // Get enrollments by user
     getEnrollmentsByUser: builder.query({
       query: (userId) => ({
@@ -41,4 +51,5 @@ export const {
   useEnrollCourseMutation,
   useGetAllEnrollmentsQuery,
   useGetEnrollmentsByUserQuery,
+  useGetLastEnrollmentsOfTeacherQuery,
 } = enrollApi;

@@ -17,7 +17,7 @@ export default function AddCourse() {
   const [category, setCategory] = useState("");
   const [thumbnail, setThumbnail] = useState(null);
   const [preview, setPreview] = useState(null);
-  const [price, setPrice] = useState("");
+  const [price, setPrice] = useState(0);
   const [loading, setLoading] = useState(false);
 
   const [createCourse] = useCreateCourseMutation();
@@ -25,7 +25,7 @@ export default function AddCourse() {
   //  Access current user from Redux
   const currentUser = useSelector((state) => state.user.user);
 
-  console.log(currentUser)
+  console.log(currentUser);
 
   const handleImageUpload = (e) => {
     const file = e.target.files[0];
@@ -86,7 +86,7 @@ export default function AddCourse() {
       category,
       price,
       thumbnail: imageUrl,
-      teacher: currentUser._id, 
+      teacher: currentUser._id,
     };
 
     try {
@@ -95,7 +95,7 @@ export default function AddCourse() {
       setTitle("");
       setDescription("");
       setCategory("");
-      setPrice("");
+      setPrice('');
       setThumbnail(null);
       setPreview(null);
     } catch (err) {
@@ -175,7 +175,7 @@ export default function AddCourse() {
               min="0"
               step="0.01"
               value={price}
-              onChange={(e) => setPrice(e.target.value)}
+              onChange={(e) => setPrice(Number(e.target.value))}
               className="w-full px-4 py-3 mt-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#48BEF7]"
               placeholder="Enter course price..."
               required

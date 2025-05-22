@@ -6,11 +6,12 @@ import Image from "next/image";
 import { Menu, X } from "lucide-react";
 import useAuth from "@/Firebase/useAuth";
 import logo from "@/assets/logo.png";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { logout } from "@/redux/features/userSlice/userSlice";
 
 export default function Navbar() {
-  const { user, logOut } = useAuth();
+  const {  logOut } = useAuth();
+  const user = useSelector((state) => state.user.user);
   const [menuOpen, setMenuOpen] = useState(false);
   const dispatch = useDispatch();
 

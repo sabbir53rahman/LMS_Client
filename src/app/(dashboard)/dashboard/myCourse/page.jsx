@@ -11,7 +11,7 @@ export default function CourseListing() {
     data: courses,
     isLoading,
     isError,
-  } = useGetCoursesByUserQuery(user._id);
+  } = useGetCoursesByUserQuery(user?._id);
 
   const coursesArray = Array.isArray(courses) ? courses : [];
 
