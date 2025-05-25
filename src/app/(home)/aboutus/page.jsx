@@ -4,48 +4,45 @@ import Image from "next/image";
 
 const AboutUs = () => {
   return (
-    <div className="bg-white text-gray-800">
+    <div className="bg-white pt-[75px] text-gray-800 font-sans leading-relaxed">
       {/* Hero Section */}
-      <section className="bg-gradient-to-r from-blue-500 to-cyan-500 text-white py-20 px-4 text-center">
-        <div className="max-w-4xl mx-auto">
-          <h1 className="text-5xl font-bold mb-4">About Our LMS</h1>
-          <p className="text-xl">
-            Revolutionizing the way people learn with technology-driven,
-            accessible education for all.
+      <section className="bg-gradient-to-r from-blue-600 to-cyan-500 text-white py-24 px-4 text-center">
+        <div className="max-w-4xl mx-auto animate-fade-in">
+          <h1 className="text-5xl font-extrabold mb-4 drop-shadow-lg">About Our LMS</h1>
+          <p className="text-xl opacity-90">
+            Revolutionizing the way people learn with technology-driven, accessible education for all.
           </p>
         </div>
       </section>
 
       {/* Mission and Vision */}
-      <section className="py-16 px-4 max-w-6xl mx-auto grid md:grid-cols-2 gap-10 items-center">
-        <div>
+      <section className="py-20 px-4 max-w-6xl mx-auto grid md:grid-cols-2 gap-12 items-center">
+        <div className="animate-slide-left">
           <Image
             src="/images/mission.jpg"
             alt="Our Mission"
             width={600}
             height={400}
-            className="rounded-xl shadow-lg w-full h-auto"
+            className="rounded-xl shadow-xl w-full h-auto object-cover"
           />
         </div>
-        <div>
-          <h2 className="text-3xl font-semibold mb-4">Our Mission</h2>
-          <p className="mb-6">
-            To make high-quality education accessible, interactive, and
-            personalized for every learner worldwide.
+        <div className="animate-slide-right">
+          <h2 className="text-3xl font-bold mb-4 text-blue-700">Our Mission</h2>
+          <p className="mb-8 text-gray-700 text-lg">
+            To make high-quality education accessible, interactive, and personalized for every learner worldwide.
           </p>
-          <h2 className="text-3xl font-semibold mb-4">Our Vision</h2>
-          <p>
-            To become the most trusted and engaging platform for modern digital
-            education, empowering students and educators to achieve their goals.
+          <h2 className="text-3xl font-bold mb-4 text-blue-700">Our Vision</h2>
+          <p className="text-gray-700 text-lg">
+            To become the most trusted and engaging platform for modern digital education, empowering students and educators to achieve their goals.
           </p>
         </div>
       </section>
 
       {/* Why Choose Us */}
-      <section className="py-16 px-4 bg-white">
+      <section className="py-20 px-4 bg-white">
         <div className="max-w-6xl mx-auto text-center">
-          <h2 className="text-3xl font-bold mb-10">Why Choose Our LMS?</h2>
-          <div className="grid md:grid-cols-3 gap-8">
+          <h2 className="text-4xl font-bold mb-14 text-blue-900">Why Choose Our LMS?</h2>
+          <div className="grid md:grid-cols-3 gap-10">
             {[
               {
                 title: "Interactive Courses",
@@ -62,9 +59,9 @@ const AboutUs = () => {
             ].map((item, i) => (
               <div
                 key={i}
-                className="bg-gray-100 p-6 rounded-xl shadow hover:shadow-md transition"
+                className="bg-blue-50 p-8 rounded-2xl shadow hover:shadow-xl transition-transform transform hover:-translate-y-1"
               >
-                <h3 className="text-xl font-semibold mb-2">{item.title}</h3>
+                <h3 className="text-xl font-semibold mb-2 text-blue-700">{item.title}</h3>
                 <p className="text-gray-600">{item.desc}</p>
               </div>
             ))}
@@ -73,10 +70,10 @@ const AboutUs = () => {
       </section>
 
       {/* Core Values */}
-      <section className="bg-gray-100 py-16 px-4">
+      <section className="bg-gray-50 py-20 px-4">
         <div className="max-w-6xl mx-auto text-center">
-          <h2 className="text-3xl font-bold mb-10">Our Core Values</h2>
-          <div className="grid md:grid-cols-3 gap-8">
+          <h2 className="text-4xl font-bold mb-14 text-blue-900">Our Core Values</h2>
+          <div className="grid md:grid-cols-3 gap-10">
             {[
               {
                 title: "Innovation",
@@ -93,9 +90,9 @@ const AboutUs = () => {
             ].map((value, index) => (
               <div
                 key={index}
-                className="bg-white p-6 rounded-xl shadow hover:shadow-lg transition"
+                className="bg-white p-8 rounded-2xl shadow hover:shadow-lg transition-transform transform hover:-translate-y-1"
               >
-                <h3 className="text-xl font-semibold mb-2">{value.title}</h3>
+                <h3 className="text-xl font-semibold mb-2 text-blue-700">{value.title}</h3>
                 <p className="text-gray-600">{value.desc}</p>
               </div>
             ))}
@@ -104,10 +101,10 @@ const AboutUs = () => {
       </section>
 
       {/* Testimonials */}
-      <section className="bg-gray-50 py-16 px-4">
+      <section className="bg-white py-20 px-4">
         <div className="max-w-6xl mx-auto text-center">
-          <h2 className="text-3xl font-bold mb-10">What Our Learners Say</h2>
-          <div className="grid md:grid-cols-2 gap-8 text-left">
+          <h2 className="text-4xl font-bold mb-14 text-blue-900">What Our Learners Say</h2>
+          <div className="grid md:grid-cols-2 gap-10">
             {[
               {
                 name: "Jane Doe",
@@ -122,10 +119,10 @@ const AboutUs = () => {
             ].map((testimony, i) => (
               <div
                 key={i}
-                className="bg-white p-6 rounded-xl shadow text-left hover:shadow-md transition"
+                className="bg-blue-50 p-8 rounded-2xl shadow hover:shadow-md text-left"
               >
-                <p className="italic mb-4">“{testimony.feedback}”</p>
-                <h4 className="font-semibold text-lg">— {testimony.name}</h4>
+                <p className="italic mb-4 text-gray-700 text-lg">“{testimony.feedback}”</p>
+                <h4 className="font-semibold text-blue-700 text-lg">— {testimony.name}</h4>
               </div>
             ))}
           </div>
@@ -133,11 +130,11 @@ const AboutUs = () => {
       </section>
 
       {/* Meet the Team */}
-      <section className="py-16 px-4 max-w-6xl mx-auto">
-        <h2 className="text-3xl font-bold text-center mb-10">Meet Our Team</h2>
-        <div className="grid md:grid-cols-4 sm:grid-cols-2 gap-8 text-center">
+      <section className="py-20 px-4 bg-gray-50">
+        <h2 className="text-4xl font-bold text-center mb-14 text-blue-900">Meet Our Team</h2>
+        <div className="grid md:grid-cols-4 sm:grid-cols-2 gap-10 max-w-6xl mx-auto text-center">
           {[1, 2, 3, 4].map((id) => (
-            <div key={id} className="bg-white p-4 rounded-xl shadow">
+            <div key={id} className="bg-white p-6 rounded-xl shadow hover:shadow-lg transition">
               <Image
                 src={`/images/team-${id}.jpg`}
                 alt={`Team Member ${id}`}
@@ -145,7 +142,7 @@ const AboutUs = () => {
                 height={96}
                 className="rounded-full mx-auto mb-4 object-cover"
               />
-              <h4 className="font-semibold text-lg">Member {id}</h4>
+              <h4 className="font-semibold text-lg text-blue-700">Member {id}</h4>
               <p className="text-gray-500 text-sm">Role / Position</p>
             </div>
           ))}
@@ -153,13 +150,12 @@ const AboutUs = () => {
       </section>
 
       {/* Join Us CTA */}
-      <section className="bg-blue-600 text-white text-center py-20 px-4">
-        <h2 className="text-3xl font-bold mb-4">Join Us on Our Mission</h2>
-        <p className="max-w-xl mx-auto mb-6">
-          Whether you&apos;re a student looking to grow or an educator ready to
-          share knowledge, our platform is built for you.
+      <section className="bg-blue-600 text-white text-center py-24 px-4">
+        <h2 className="text-4xl font-bold mb-4">Join Us on Our Mission</h2>
+        <p className="max-w-xl mx-auto mb-8 text-lg">
+          Whether you're a student looking to grow or an educator ready to share knowledge, our platform is built for you.
         </p>
-        <button className="bg-white text-blue-600 font-semibold py-2 px-6 rounded-full hover:bg-gray-200 transition">
+        <button className="bg-white text-blue-600 font-bold py-3 px-8 rounded-full shadow hover:bg-gray-100 transition duration-300">
           Get Started
         </button>
       </section>
