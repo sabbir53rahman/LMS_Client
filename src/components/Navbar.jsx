@@ -50,6 +50,12 @@ export default function Navbar() {
           >
             Courses
           </Link>
+          <Link
+            href="/aboutus"
+            className="text-[#2D2E32] hover:text-[#48BEF7] font-medium transition-colors"
+          >
+            About Us
+          </Link>
           {user && (
             <Link
               href="/dashboard"

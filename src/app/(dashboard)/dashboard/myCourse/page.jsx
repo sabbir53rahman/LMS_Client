@@ -4,6 +4,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { useGetCoursesByUserQuery } from "@/redux/features/courseSlice/courseSlice";
 import { useSelector } from "react-redux";
+import { Skeleton } from "antd";
 
 export default function CourseListing() {
   const user = useSelector((state) => state.user.user);
@@ -14,6 +15,17 @@ export default function CourseListing() {
   } = useGetCoursesByUserQuery(user?._id);
 
   const coursesArray = Array.isArray(courses) ? courses : [];
+  const renderSkeletonCards = () => {
+    return Array.from({ length: 6 }).map((_, index) => (
+      <div
+        key={index}
+        className="bg-white border border-gray-200 rounded-2xl shadow-sm p-4"
+      >
+        <Skeleton.Image style={{ width: "100%", height: 200 }} active />
+        <Skeleton active paragraph={{ rows: 2 }} className="mt-4" />
+      </div>
+    ));
+  };
 
   return (
     <div className="bg-[#F9FAFB] px-6 py-12">
@@ -22,7 +34,12 @@ export default function CourseListing() {
           All My Courses
         </h1>
 
-        {isLoading && <p className="text-center">Loading courses...</p>}
+        {isLoading && (
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+            {renderSkeletonCards()}
+          </div>
+        )}
+
         {isError && (
           <p className="text-center text-red-500">Failed to load courses.</p>
         )}

@@ -26,6 +26,9 @@ export default function LessonDetails() {
   const [userRole, setUserRole] = useState("student");
 
   const [commentContent, setCommentContent] = useState("");
+  const [reactionLoading, setReactionLoading] = useState(false);
+  const [commentLoading, setCommentLoading] = useState(false);
+
   const [addComment] = useAddCommentMutation();
 
   const {
@@ -33,16 +36,6 @@ export default function LessonDetails() {
     isLoading: isCommentsLoading,
     refetch: refetchComments,
   } = useGetLessonCommentsQuery(id);
-
-  useEffect(() => {
-    if (!user) {
-      setUserRole("guest");
-    } else if (user.role === "teacher") {
-      setUserRole("teacher");
-    } else {
-      setUserRole("student");
-    }
-  }, [user]);
 
   const { data: lesson, isLoading, isError } = useGetLessonByIdQuery(id);
 
@@ -60,40 +53,58 @@ export default function LessonDetails() {
   const [addDislike] = useAddDislikeMutation();
   const [removeLike] = useRemoveLikeMutation();
   const [removeDislike] = useRemoveDislikeMutation();
+  const [pendingReaction, setPendingReaction] = useState(null);
+  const [localReaction, setLocalReaction] = useState(null); // 'like' | 'dislike' | null
+
+  useEffect(() => {
+    if (!user) {
+      setUserRole("guest");
+    } else if (user.role === "teacher") {
+      setUserRole("teacher");
+    } else {
+      setUserRole("student");
+    }
+  }, [user]);
+
+  useEffect(() => {
+    setLocalReaction(userLike ? "like" : userDislike ? "dislike" : null);
+  }, [userLike, userDislike]);
 
   const handleReaction = async (reactionType) => {
     if (!user?._id) return alert("Please login to react.");
 
+    setPendingReaction(reactionType); // track which button is being clicked
+    setReactionLoading(true);
+
     try {
       if (reactionType === "like") {
-        if (userLike) {
-          await removeLike({ lessonId: id, userId: user._id });
-        } else {
+        if (localReaction !== "like") {
           await addLike({ lessonId: id, userId: user._id });
-          if (userDislike) {
+          if (localReaction === "dislike") {
             await removeDislike({ lessonId: id, userId: user._id });
           }
         }
       } else if (reactionType === "dislike") {
-        if (userDislike) {
-          await removeDislike({ lessonId: id, userId: user._id });
-        } else {
+        if (localReaction !== "dislike") {
           await addDislike({ lessonId: id, userId: user._id });
-          if (userLike) {
+          if (localReaction === "like") {
             await removeLike({ lessonId: id, userId: user._id });
           }
         }
       }
 
-      refetchLike();
-      refetchDislike();
+      await Promise.all([refetchLike(), refetchDislike()]);
     } catch (err) {
       console.error("Reaction error:", err);
+    } finally {
+      setReactionLoading(false);
+      setPendingReaction(null);
     }
   };
 
   const handleSubmitComment = async () => {
     if (!commentContent.trim()) return;
+    setCommentLoading(true);
 
     try {
       await addComment({ lessonId: id, content: commentContent });
@@ -101,10 +112,10 @@ export default function LessonDetails() {
       refetchComments();
     } catch (err) {
       console.error("Failed to add comment:", err);
+    } finally {
+      setCommentLoading(false);
     }
   };
-
-  const userReaction = userLike ? "like" : userDislike ? "dislike" : null;
 
   if (isLoading) {
     return (
@@ -159,21 +170,32 @@ export default function LessonDetails() {
         <div className="flex items-center gap-4 pt-4">
           <button
             onClick={() => handleReaction("like")}
-            className={`px-4 py-2 rounded ${
-              userReaction === "like" ? "bg-blue-500 text-white" : "bg-gray-200"
+            disabled={reactionLoading}
+            className={`px-4 py-2 rounded flex items-center gap-2 ${
+              localReaction === "like"
+                ? "bg-blue-500 text-white"
+                : "bg-gray-200"
             }`}
           >
             👍 Like
+            {reactionLoading && pendingReaction === "like" && (
+              <span className="animate-spin border-t-2 border-white rounded-full w-4 h-4"></span>
+            )}
           </button>
+
           <button
             onClick={() => handleReaction("dislike")}
-            className={`px-4 py-2 rounded ${
-              userReaction === "dislike"
+            disabled={reactionLoading}
+            className={`px-4 py-2 rounded flex items-center gap-2 ${
+              localReaction === "dislike"
                 ? "bg-red-500 text-white"
                 : "bg-gray-200"
             }`}
           >
             👎 Dislike
+            {reactionLoading && pendingReaction === "dislike" && (
+              <span className="animate-spin border-t-2 border-white rounded-full w-4 h-4"></span>
+            )}
           </button>
         </div>
 
@@ -185,11 +207,16 @@ export default function LessonDetails() {
               onChange={(e) => setCommentContent(e.target.value)}
               placeholder="Write your comment..."
               className="w-full p-3 border rounded-md"
+              disabled={commentLoading}
             />
             <button
               onClick={handleSubmitComment}
-              className="mt-2 px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition"
+              disabled={commentLoading}
+              className="mt-2 px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition flex items-center gap-2"
             >
+              {commentLoading && (
+                <span className="animate-spin border-t-2 border-white rounded-full w-4 h-4"></span>
+              )}
               Submit Comment
             </button>
           </div>

@@ -4,6 +4,7 @@ import { useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { Search, Filter } from "lucide-react";
+import { Skeleton } from "antd";
 import { useGetAllCoursesQuery } from "@/redux/features/courseSlice/courseSlice";
 
 const categories = [
@@ -24,6 +25,18 @@ export default function CourseListing() {
       (selectedCategory === "All" || course.category === selectedCategory) &&
       course.title.toLowerCase().includes(searchTerm.toLowerCase())
   );
+
+  const renderSkeletonCards = () => {
+    return Array.from({ length: 6 }).map((_, index) => (
+      <div
+        key={index}
+        className="bg-white border border-gray-200 rounded-2xl shadow-sm p-4"
+      >
+        <Skeleton.Image style={{ width: "100%", height: 200 }} active />
+        <Skeleton active paragraph={{ rows: 2 }} className="mt-4" />
+      </div>
+    ));
+  };
 
   return (
     <div className="bg-[#F9FAFB] px-6 pt-[100px] py-12">
@@ -64,8 +77,14 @@ export default function CourseListing() {
           </div>
         </div>
 
-        {/* Loading or Error State */}
-        {isLoading && <p className="text-center">Loading courses...</p>}
+        {/* Loading State */}
+        {isLoading && (
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+            {renderSkeletonCards()}
+          </div>
+        )}
+
+        {/* Error State */}
         {isError && (
           <p className="text-center text-red-500">Failed to load courses.</p>
         )}

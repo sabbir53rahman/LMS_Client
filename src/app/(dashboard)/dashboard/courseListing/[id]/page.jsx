@@ -10,23 +10,35 @@ import {
   useDeleteCourseMutation,
 } from "@/redux/features/courseSlice/courseSlice";
 
-import { PlayCircle, CheckCircle } from "lucide-react";
 import {
   useEnrollCourseMutation,
   useGetEnrollmentsByUserQuery,
+  useUpdateProgressMutation,
 } from "@/redux/features/enrollSlice/enrollSlice";
+
+import { PlayCircle, CheckCircle } from "lucide-react";
+import { Spin } from "antd";
+import { LoadingOutlined } from "@ant-design/icons";
 
 export default function CourseDetails() {
   const { id } = useParams();
   const router = useRouter();
 
-  const { data: courseData, isLoading, isError } = useGetCourseByIdQuery(id);
+  const {
+    data: courseData,
+    isLoading,
+    isError,
+    refetch,
+  } = useGetCourseByIdQuery(id);
+
   const [deleteCourse, { isLoading: isDeleting }] = useDeleteCourseMutation();
   const [enrollCourse] = useEnrollCourseMutation();
+  const [updateProgress] = useUpdateProgressMutation();
 
   const user = useSelector((state) => state.user.user);
   const userRole = user?.role || "guest";
 
+  // Query enrollments only for students with userId
   const { data: enrollments, isLoading: isEnrollmentsLoading } =
     useGetEnrollmentsByUserQuery(user?._id, {
       skip: !user?._id || userRole !== "student",
@@ -36,20 +48,31 @@ export default function CourseDetails() {
   const [progress, setProgress] = useState(0);
 
   useEffect(() => {
-    if (courseData) {
-      const completedLessons =
-        courseData.lessons?.filter((l) => l.completed).length || 0;
-      const totalLessons = courseData.lessons?.length || 1;
-      setProgress((completedLessons / totalLessons) * 100);
-    }
-
-    if (userRole === "student" && enrollments?.length > 0 && courseData) {
-      const enrolled = enrollments.some(
-        (enroll) => enroll.course?._id === courseData._id
-      );
+    if (courseData && userRole === "student") {
+      const enrolled = Array.isArray(enrollments)
+        ? enrollments.some((enroll) => enroll.course?._id === courseData._id)
+        : false;
       setIsEnrolled(enrolled);
+  
+      if (enrolled) {
+        const enrollment = Array.isArray(enrollments)
+          ? enrollments.find((enroll) => enroll.course?._id === courseData._id)
+          : null;
+  
+        if (enrollment?.progress) {
+          setProgress(enrollment.progress);
+        } else {
+          const completedLessons =
+            courseData.lessons?.filter((l) => l.completed).length || 0;
+          const totalLessons = courseData.lessons?.length || 1;
+          setProgress((completedLessons / totalLessons) * 100);
+        }
+      } else {
+        setProgress(0);
+      }
     }
   }, [courseData, enrollments, userRole]);
+  
 
   const handleEnroll = async () => {
     try {
@@ -75,15 +98,35 @@ export default function CourseDetails() {
         router.push("/dashboard");
       } catch (error) {
         console.error("Failed to delete course:", error);
-        alert("Your are not authorize to delete this course");
+        alert("You're not authorized to delete this course.");
       }
     }
   };
 
+  const handleLessonClick = async (lessonId) => {
+    if (userRole === "student") {
+      try {
+        await updateProgress({
+          userId: user._id,
+          courseId: courseData._id,
+          lessonId: lessonId,
+        }).unwrap();
+        refetch();
+      } catch (error) {
+        console.error("Progress update failed:", error);
+      }
+    }
+  };
+
+  const loadingIcon = <LoadingOutlined style={{ fontSize: 40 }} spin />;
+
   if (isLoading || isEnrollmentsLoading)
     return (
-      <div className="flex justify-center items-center h-screen text-xl font-semibold text-gray-600">
-        Loading...
+      <div className="flex flex-col justify-center items-center h-screen gap-4">
+        <Spin indicator={loadingIcon} />
+        <p className="text-gray-600 text-lg font-medium">
+          Fetching course details...
+        </p>
       </div>
     );
 
@@ -127,7 +170,7 @@ export default function CourseDetails() {
             </p>
           )}
 
-          {/* Progress Bar (Students) */}
+          {/* Progress Bar */}
           {userRole === "student" && isEnrolled && (
             <div className="mt-6">
               <p className="text-gray-700 font-semibold mb-2">Progress:</p>
@@ -140,7 +183,7 @@ export default function CourseDetails() {
             </div>
           )}
 
-          {/* Action Buttons */}
+          {/* Actions */}
           <div className="mt-8 flex flex-wrap gap-4">
             {userRole === "guest" && (
               <p className="text-red-500 font-semibold">
@@ -155,6 +198,12 @@ export default function CourseDetails() {
               >
                 Enroll Now
               </button>
+            )}
+
+            {userRole === "student" && isEnrolled && (
+              <span className="text-green-600 font-semibold text-lg">
+                ✅ Enrolled
+              </span>
             )}
 
             {userRole === "teacher" && (
@@ -176,7 +225,7 @@ export default function CourseDetails() {
             )}
           </div>
 
-          {/* Lesson List */}
+          {/* Lessons */}
           <div className="mt-10">
             <h2 className="text-2xl font-semibold text-gray-800">Lessons</h2>
             <ul className="mt-6 space-y-4">
@@ -198,6 +247,7 @@ export default function CourseDetails() {
                     </div>
                     <Link
                       href={`/dashboard/lesson/${lesson._id}`}
+                      onClick={() => handleLessonClick(lesson._id)}
                       className="text-blue-600 font-semibold hover:underline"
                     >
                       Watch
@@ -205,14 +255,12 @@ export default function CourseDetails() {
                   </li>
                 ))
               ) : (
-                <p className="text-center text-gray-500">
-                  No lessons available
-                </p>
+                <p className="text-center text-gray-500">No lessons available</p>
               )}
             </ul>
           </div>
 
-          {/* Teacher Add Lesson */}
+          {/* Add Lesson Button */}
           {userRole === "teacher" && (
             <div className="mt-10">
               <Link

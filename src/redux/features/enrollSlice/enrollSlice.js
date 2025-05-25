@@ -1,3 +1,4 @@
+// enrollApi.js
 import { apiSlice } from "../apiSlice/apiSlice";
 
 export const enrollApi = apiSlice.injectEndpoints({
@@ -24,6 +25,7 @@ export const enrollApi = apiSlice.injectEndpoints({
       providesTags: ["Enrollment"],
     }),
 
+    // Get last 10 enrollments of a teacher
     getLastEnrollmentsOfTeacher: builder.query({
       query: (teacherId) => ({
         url: `/enroll/teacher/${teacherId}`,
@@ -44,6 +46,28 @@ export const enrollApi = apiSlice.injectEndpoints({
         { type: "Enrollment", id: userId },
       ],
     }),
+
+    updateProgress: builder.mutation({
+      query: ({ userId, courseId, lessonId }) => ({
+        url: `/enroll/progress/${userId}/${courseId}/${lessonId}`,
+        method: "PATCH",
+        credentials: "include",
+      }),
+      invalidatesTags: (result, error, { userId }) => [
+        { type: "Enrollment", id: `recent-${userId}` },
+        { type: "Enrollment", id: userId },
+      ],
+    }),
+
+    getRecentProgressByUser: builder.query({
+      query: (userId) => ({
+        url: `/enroll/recent-progress/${userId}`,
+        credentials: "include",
+      }),
+      providesTags: (result, error, userId) => [
+        { type: "Enrollment", id: `recent-${userId}` },
+      ],
+    }),
   }),
 });
 
@@ -52,4 +76,6 @@ export const {
   useGetAllEnrollmentsQuery,
   useGetEnrollmentsByUserQuery,
   useGetLastEnrollmentsOfTeacherQuery,
+  useGetRecentProgressByUserQuery,
+  useUpdateProgressMutation,
 } = enrollApi;
