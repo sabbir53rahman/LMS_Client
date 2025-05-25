@@ -153,7 +153,7 @@ const AboutUs = () => {
       <section className="bg-blue-600 text-white text-center py-24 px-4">
         <h2 className="text-4xl font-bold mb-4">Join Us on Our Mission</h2>
         <p className="max-w-xl mx-auto mb-8 text-lg">
-          Whether you're a student looking to grow or an educator ready to share knowledge, our platform is built for you.
+          Whether you&apos;re a student looking to grow or an educator ready to share knowledge, our platform is built for you.
         </p>
         <button className="bg-white text-blue-600 font-bold py-3 px-8 rounded-full shadow hover:bg-gray-100 transition duration-300">
           Get Started
