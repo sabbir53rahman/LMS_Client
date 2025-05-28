@@ -5,11 +5,17 @@ import Navbar from "@/components/Navbar";
 import "./globals.css";
 import useAuth from "@/Firebase/useAuth";
 import { store } from "@/redux/app/store";
+import { Loader2 } from "lucide-react";
 
 const Spinner = () => (
-  <div className="h-screen flex items-center justify-center">
-    <div className="animate-spin h-12 w-12 border-4 border-blue-500 border-t-transparent rounded-full" />
-  </div>
+  <div className="min-h-screen bg-black flex flex-col justify-center items-center gap-6">
+        <div className="w-16 h-16 bg-gradient-to-r from-orange-500 to-red-500 rounded-full flex items-center justify-center animate-pulse">
+          <Loader2 className="w-8 h-8 text-white animate-spin" />
+        </div>
+        <p className="text-white text-xl font-medium">
+          Loading details...
+        </p>
+      </div>
 );
 
 const LayoutContent = ({ children }) => {

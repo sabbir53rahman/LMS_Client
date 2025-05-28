@@ -1,3 +1,4 @@
+import Navbar from "@/components/Navbar";
 import PrivateRoute from "@/components/PrivateRoute";
 import Sidebar from "@/components/Sidebar";
 import React from "react";
@@ -6,6 +7,7 @@ function Layout({ children }) {
   return (
     <PrivateRoute>
       <div className="flex">
+        <Navbar/>
         {/* Sidebar - Fixed on the left */}
         <div className="hidden md:block w-64 fixed top-0 left-0 h-screen bg-gray-900 shadow-md overflow-y-auto">
           <Sidebar />

@@ -2,15 +2,14 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import Image from "next/image";
-import { Menu, X } from "lucide-react";
+import { Menu, X, Target } from "lucide-react";
+import { Button } from "@/components/ui/button";
 import useAuth from "@/Firebase/useAuth";
-import logo from "@/assets/logo.png";
 import { useDispatch, useSelector } from "react-redux";
 import { logout } from "@/redux/features/userSlice/userSlice";
 
 export default function Navbar() {
-  const {  logOut } = useAuth();
+  const { logOut } = useAuth();
   const user = useSelector((state) => state.user.user);
   const [menuOpen, setMenuOpen] = useState(false);
   const dispatch = useDispatch();
@@ -26,99 +25,104 @@ export default function Navbar() {
   };
 
   return (
-    <header className="bg-white shadow-md fixed top-0 left-0 right-0 z-50">
-      <div className="container mx-auto px-4 py-4 flex items-center justify-between">
-        {/* Logo */}
-        <div className="flex items-center gap-2 flex-shrink-0">
-          <Link href="/" className="flex items-center gap-2">
-            <Image src={logo} alt="Logo" width={60} height={60} />
-            <span className="font-bold text-xl text-[#2D2E32]">SkillNest</span>
-          </Link>
-        </div>
+    <header className="fixed top-0 left-0 right-0 z-50 bg-black/60 backdrop-blur-xl border-b border-gray-800 shadow-md transition-all duration-500">
+      <div className="container mx-auto flex items-center justify-between px-6 py-4">
+        {/* Logo & Text */}
+        <Link href="/" className="flex items-center gap-3">
+          <div className="relative">
+            <div className="w-12 h-12 bg-gradient-to-r from-orange-500 via-red-500 to-pink-500 rounded-2xl flex items-center justify-center shadow-lg shadow-orange-500/25">
+              <Target className="w-7 h-7 text-white" />
+            </div>
+            <div className="absolute -top-1 -right-1 w-4 h-4 bg-green-400 rounded-full animate-ping"></div>
+          </div>
+          <div>
+            <span className="text-white font-bold text-2xl bg-gradient-to-r from-white to-gray-200 bg-clip-text text-transparent">
+              SkillNest
+            </span>
+            <div className="text-xs text-orange-300">Master • Build • Succeed</div>
+          </div>
+        </Link>
 
-        {/* Nav Links - Centered */}
-        <nav className="hidden md:flex flex-1 justify-center gap-8">
-          <Link
-            href="/"
-            className="text-[#2D2E32] hover:text-[#48BEF7] font-medium transition-colors"
-          >
-            Home
-          </Link>
-          <Link
-            href="/courses"
-            className="text-[#2D2E32] hover:text-[#48BEF7] font-medium transition-colors"
-          >
-            Courses
-          </Link>
-          <Link
-            href="/aboutus"
-            className="text-[#2D2E32] hover:text-[#48BEF7] font-medium transition-colors"
-          >
-            About Us
-          </Link>
+        {/* Nav Links */}
+        <nav className="hidden md:flex items-center gap-8">
+          {["Home", "Courses", "About Us"].map((text, index) => (
+            <Link
+              key={index}
+              href={`/${text.toLowerCase().replace(" ", "")}`}
+              className="text-gray-300 hover:text-white transition-all duration-300 font-medium relative group"
+            >
+              {text}
+              <div className="absolute -bottom-1 left-0 w-0 h-0.5 bg-gradient-to-r from-orange-500 to-red-500 group-hover:w-full transition-all duration-300"></div>
+            </Link>
+          ))}
           {user && (
             <Link
               href="/dashboard"
-              className="text-[#2D2E32] hover:text-[#48BEF7] font-medium transition-colors"
+              className="text-gray-300 hover:text-white transition-all duration-300 font-medium relative group"
             >
               Dashboard
+              <div className="absolute -bottom-1 left-0 w-0 h-0.5 bg-gradient-to-r from-orange-500 to-red-500 group-hover:w-full transition-all duration-300"></div>
             </Link>
           )}
         </nav>
 
-        {/* Auth Buttons - Right */}
+        {/* Auth Buttons */}
         <div className="hidden md:flex items-center gap-4">
           {user ? (
-            <button
+            <Button
+              variant="ghost"
               onClick={handleLogout}
-              className="bg-red-500 text-white px-4 py-2 rounded-lg font-semibold hover:bg-red-600 transition-colors"
+              className="text-white hover:text-white hover:bg-gray-800 border border-gray-700 backdrop-blur-sm"
             >
               Logout
-            </button>
+            </Button>
           ) : (
             <>
-              <Link
-                href="/auth/login"
-                className="border border-[#48BEF7] text-[#48BEF7] px-4 py-2 rounded-lg font-semibold hover:bg-[#48BEF7] hover:text-white transition-colors"
-              >
-                Login
+              <Link href="/auth/login">
+                <Button
+                  variant="ghost"
+                  className="text-white hover:text-white hover:bg-gray-800 border border-gray-700 backdrop-blur-sm"
+                >
+                  Login
+                </Button>
               </Link>
-              <Link
-                href="/auth/signup"
-                className="bg-[#48BEF7] text-white px-4 py-2 rounded-lg font-semibold hover:bg-[#36a5dc] transition-colors"
-              >
-                Sign Up
+              <Link href="/auth/signup">
+                <Button className="bg-gradient-to-r from-orange-500 via-red-500 to-pink-500 hover:from-orange-600 hover:via-red-600 hover:to-pink-600 text-white px-6 py-2 rounded-xl font-medium shadow-lg shadow-orange-500/25 hover:shadow-orange-500/40 transition-all duration-300">
+                  Sign Up
+                </Button>
               </Link>
             </>
           )}
         </div>
 
         {/* Mobile Menu Button */}
-        <button className="md:hidden" onClick={() => setMenuOpen(!menuOpen)}>
+        <button
+          className="md:hidden text-white"
+          onClick={() => setMenuOpen(!menuOpen)}
+        >
           {menuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
         </button>
       </div>
 
-      {/* Mobile Nav */}
+      {/* Mobile Menu */}
       {menuOpen && (
-        <div className="md:hidden bg-white px-4 pb-6 shadow-md">
-          <nav className="flex flex-col items-center gap-4">
-            <Link
-              href="/"
-              className="text-[#2D2E32] hover:text-[#48BEF7] font-medium"
-            >
-              Home
-            </Link>
-            <Link
-              href="/courses"
-              className="text-[#2D2E32] hover:text-[#48BEF7] font-medium"
-            >
-              Courses
-            </Link>
+        <div className="md:hidden bg-black/90 backdrop-blur-xl border-t border-gray-700 px-4 pb-6 shadow-lg">
+          <nav className="flex flex-col items-center gap-4 py-4">
+            {["Home", "Courses", "About Us"].map((text, index) => (
+              <Link
+                key={index}
+                href={`/${text.toLowerCase().replace(" ", "")}`}
+                className="text-gray-300 hover:text-white font-medium"
+                onClick={() => setMenuOpen(false)}
+              >
+                {text}
+              </Link>
+            ))}
             {user && (
               <Link
                 href="/dashboard"
-                className="text-[#2D2E32] hover:text-[#48BEF7] font-medium"
+                className="text-gray-300 hover:text-white font-medium"
+                onClick={() => setMenuOpen(false)}
               >
                 Dashboard
               </Link>
@@ -126,7 +130,7 @@ export default function Navbar() {
             {user ? (
               <button
                 onClick={handleLogout}
-                className="w-full text-center bg-red-500 text-white px-4 py-2 rounded-lg font-semibold hover:bg-red-600 transition-colors"
+                className="w-full text-center bg-red-600 text-white px-4 py-2 rounded-lg font-semibold hover:bg-red-700 transition"
               >
                 Logout
               </button>
@@ -134,13 +138,15 @@ export default function Navbar() {
               <>
                 <Link
                   href="/auth/login"
-                  className="w-full text-center border border-[#48BEF7] text-[#48BEF7] px-4 py-2 rounded-lg font-semibold hover:bg-[#48BEF7] hover:text-white transition-colors"
+                  className="w-full text-center border border-white text-white px-4 py-2 rounded-lg font-medium hover:bg-white hover:text-white transition"
+                  onClick={() => setMenuOpen(false)}
                 >
                   Login
                 </Link>
                 <Link
                   href="/auth/signup"
-                  className="w-full text-center bg-[#48BEF7] text-white px-4 py-2 rounded-lg font-semibold hover:bg-[#36a5dc] transition-colors"
+                  className="w-full text-center bg-white text-black px-4 py-2 rounded-lg font-semibold hover:bg-gray-300 transition"
+                  onClick={() => setMenuOpen(false)}
                 >
                   Sign Up
                 </Link>

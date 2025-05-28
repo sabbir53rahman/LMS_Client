@@ -610,7 +610,7 @@ export default function CourseDetails() {
               <p className="text-gray-300 mb-6">
                 Are you sure you want to delete{" "}
                 <span className="text-white font-semibold">
-                &quot;{courseData.title}&quot;
+                  &quot;{courseData.title}&quot;
                 </span>
                 ? All lessons and enrollment data will be permanently removed.
               </p>
