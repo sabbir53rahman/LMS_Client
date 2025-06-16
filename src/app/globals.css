@@ -58,7 +58,14 @@
     --chart-5: 340 75% 55%;
   }
 }
-
+@layer components {
+  .primary_button {
+    @apply h-12 px-8 bg-emerald-600 hover:bg-emerald-700 text-white font-semibold rounded-xl shadow-lg hover:shadow-xl transition-all duration-200 transform hover:-translate-y-0.5;
+  }
+  .secondary_button {
+    @apply h-12 px-8 bg-orange-500 hover:bg-orange-600 text-white font-semibold rounded-xl shadow-lg hover:shadow-xl transition-all duration-200 transform hover:-translate-y-0.5;
+  }
+}
 @layer utilities {
   .animate-gradient-x {
     animation: gradient-x 15s ease infinite;
